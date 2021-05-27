@@ -12,7 +12,7 @@ def runScript(user):
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--no-sandbox")
 
-    driver = webdriver.Chrome("C:\\MEGA\\Python\\Krunker API\\Running-Selenium-Script-on-Heroku\\chromedriver.exe", chrome_options=chrome_options)    
+    driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=chrome_options)    
 
     driver.get('https://krunker.io/social.html?p=profile&q=' + user);
 

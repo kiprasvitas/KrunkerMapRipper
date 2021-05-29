@@ -1,26 +1,29 @@
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
+import undetected_chromedriver.v2 as uc
+from pprint import pformat
+import base64
 import os
+import asyncio
 
-def runScript(user):
-    chrome_options = webdriver.ChromeOptions()
-    chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
+options = uc.ChromeOptions()
+#options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
 
-    chrome_options.add_argument("--headless")
-    chrome_options.add_argument("--disable-dev-shm-usage")
-    chrome_options.add_argument("--no-sandbox")
+#options.add_argument("--headless")
+#options.add_argument("--disable-dev-shm-usage")
+#options.add_argument("--no-sandbox")
 
-    driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=chrome_options)    
+driver = uc.Chrome(options=options, enable_cdp_events=True)
 
-    driver.get('https://krunker.io/social.html?p=profile&q=' + user);
+async def main():
+    def printResponse(eventdata):
+        payload = eventdata['params']['response']['payloadData']
+        data = base64.b64decode(payload)
+        print(payload)
 
-    element = WebDriverWait(driver, 30).until(EC.visibility_of_element_located((By.XPATH, "/html/body/div[2]/div[8]/div[5]/div[1]/div[3]")))
-    res = driver.find_element_by_xpath('/html/body/div[2]/div[8]/div[5]/div[1]/div[3]')
-    res_html = res.get_attribute('outerHTML')
-    driver.close()
-    return(res_html)
-    
+    driver.get('https://krunker.io')
 
-    
+    driver.add_cdp_listener("Network.webSocketFrameReceived", printResponse)
+    driver.add_cdp_listener("Network.webSocketFrameSent", printResponse)
+
+    await asyncio.sleep(2000)
+
+asyncio.get_event_loop().run_until_complete(main())

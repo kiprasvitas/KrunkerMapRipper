@@ -1,5 +1,5 @@
 Flask==1.1.2
-undetected_chromedriver==3.0.0
+pip install git+https://github.com/ultrafunkamsterdam/undetected-chromedriver.git
 requests==2.25.1
 redis==3.5.3
 rq==1.8.1

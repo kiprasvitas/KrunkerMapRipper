@@ -2,7 +2,7 @@ import os
 from flask import Flask, request, jsonify
 from rq import Queue
 from worker import conn
-from tasks import scrapeMap
+from utils import scrapeMap
 
 app = Flask(__name__)
 q = Queue(connection=conn)

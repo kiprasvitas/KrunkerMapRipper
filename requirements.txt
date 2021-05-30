@@ -1,9 +1,5 @@
 Flask==1.1.2
-rq
-requests
-undetected_chromedriver
-pprint
-base64
-time
-asyncio
-json
+undetected_chromedriver==3.0.0
+requests==2.25.1
+redis==3.5.3
+rq==1.8.1

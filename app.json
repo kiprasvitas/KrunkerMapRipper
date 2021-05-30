@@ -1,8 +1,8 @@
 {
-  "name": "Minimal Heroku Python",
-  "description": "Minimal Python Flask app from the Heroku blog",
+  "name": "Krunker API",
+  "description": "Python Krunker API",
   "repository": "https://github.com/rydamil60000g/heroku-python-minimal",
-  "logo": "http://www.unixstickers.com/image/data/stickers/python/python.sh.png",
+  "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Python-logo-notext.svg/768px-Python-logo-notext.svg.png",
   "keywords": ["python", "flask", "beginner", "minimal"],
   "addons": [ "redistogo" ],
   "formation": {

@@ -1,5 +1,4 @@
 import undetected_chromedriver.v2 as uc
-from pprint import pformat
 import base64
 from time import sleep
 import os

@@ -5,6 +5,25 @@
   "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Python-logo-notext.svg/768px-Python-logo-notext.svg.png",
   "keywords": ["python", "flask", "beginner", "minimal"],
   "addons": [ "redistogo" ],
+  "buildpacks": [
+    {
+		"url": "https://github.com/heroku/heroku-buildpack-google-chrome"
+    },
+	{
+		"url": "https://github.com/heroku/heroku-buildpack-chromedriver"
+	},
+    {
+		"url": "heroku/python"
+    }
+  ],
+  "env": {
+    "CHROMEDRIVER_PATH": {
+      "value": "/app/.chromedriver/bin/chromedriver"
+    },
+    "GOOGLE_CHROME_BIN": {
+      "value": "/app/.apt/usr/bin/google-chrome"
+    }
+  },
   "formation": {
     "worker": {
       "quantity": 1,

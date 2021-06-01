@@ -6,6 +6,8 @@ import asyncio
 import requests
 import json
 
+websocket_count = 0;
+
 def scrapeMap(name):
     map_name = name
 
@@ -20,6 +22,7 @@ def scrapeMap(name):
 
     async def main():
         def printResponse(eventdata):
+            global websocket_count
             payload = eventdata['params']['response']['payloadData']
             data = base64.b64decode(payload)
             size = (len(data) * 3) / 4
@@ -46,6 +49,12 @@ def scrapeMap(name):
                 print("Successfully loaded map code for {}".format(map_name))
                 driver.quit()
                 return code
+            elif (websocket_count < 10):
+                websocket_count = websocket_count + 1
+            else:
+                print("No map data to return")
+                driver.quit()
+                return "No map data was found at given map name."
 
         driver.get('https://krunker.io/?play={}'.format(map_name))
         print("website loaded")

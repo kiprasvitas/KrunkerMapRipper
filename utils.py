@@ -9,16 +9,6 @@ import json
 def scrapeMap(name):
     map_name = name
 
-    res = requests.get('https://api.krunker.io/search?type=map&val=' + map_name)
-    response = json.loads(res.text)
-
-    try:
-        map_id = response["data"][0]["map_id"]
-        map_creator = response["data"][0]["creatorname"]
-    except:
-        print("no map found")
-        return "No map found with that name"
-
     options = uc.ChromeOptions()
     options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
 
@@ -57,21 +47,8 @@ def scrapeMap(name):
                 driver.quit()
                 return code
 
-        driver.get('https://krunker.io')
-
+        driver.get('https://krunker.io/?play={}'.format(map_name))
         print("website loaded")
-        sleep(2)
-
-        try:
-            driver.execute_script("selectHostMap('{0}','undefined','{1}','{2}',1)".format(map_name, map_id, map_creator))
-            print("host function executed")
-            sleep(1)
-        except:
-            driver.quit()
-            return "failed operation at host map"
-
-        driver.execute_script("createPrivateRoom()")
-        print("started hoster")
 
         driver.add_cdp_listener("Network.webSocketFrameReceived", printResponse)
         driver.add_cdp_listener("Network.webSocketFrameSent", printResponse)

@@ -30,7 +30,7 @@ def handle_job():
         else:
             output = { 'id': None, 'error_message': 'No job exists with the id number ' + query_id }
     elif query_name and query_key:
-        if (str(base64.b64decode(api_key))[2:-1] == str(datetime.today()).split()[0]):
+        if (str(base64.b64decode(query_key))[2:-1] == str(datetime.today()).split()[0]):
             new_job = q.enqueue(scrapeMap, query_name)
             output = get_status(new_job)
         else:

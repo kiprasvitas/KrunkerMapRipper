@@ -34,9 +34,9 @@ def handle_job():
             output = get_status(new_job)
         else:
             output = {'error_message': 'Failed to start due to an invalid API key'}
-    elif query_name == null and query_key:
+    elif query_name is None and query_key:
         output = {'error_message': 'No job can start without a map name'}
-    elif query_key == null and query_name:
+    elif query_key is None and query_name:
         output = {'error_message': 'No job can start without a valid API key'}
     else:
         output = {'error_message': 'No job can start without a map name and a valid API key'}

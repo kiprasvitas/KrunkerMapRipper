@@ -6,6 +6,7 @@ from utils import scrapeMap
 from datetime import datetime
 import base64
 import requests
+import json
 
 app = Flask(__name__)
 q = Queue(connection=conn)
@@ -31,7 +32,13 @@ def handle_job():
         else:
             output = { 'id': None, 'error_message': 'No job exists with the id number ' + query_id }
     elif query_name and query_key:
-        try:
+        def isBase64(s):
+            try:
+                base64.b64decode(s)
+                return True
+            except:
+                return False
+        if (isBase64(query_key) == True):
             if (str(base64.b64decode(query_key))[2:-1] == str(datetime.today()).split()[0]):
                 res = requests.get('https://api.krunker.io/search?type=map&val=' + query_name)
                 response = json.loads(res.text)
@@ -40,16 +47,14 @@ def handle_job():
                     if (map_id):
                         new_job = q.enqueue(scrapeMap, query_name)
                         output = get_status(new_job)
-                    else:
-                        print("no map found")
-                        output = {'error_message': 'No map found with that name'}
                 except:
                     print("no map found")
                     output = {'error_message': 'No map found with that name'}
             else:
                 output = {'error_message': 'Failed to start due to an invalid API key'}
-        except:
+        else:
             output = {'error_message': 'Failed to start due to an invalid API key'}
+
     elif query_name is None and query_key:
         output = {'error_message': 'No job can start without a map name'}
     elif query_key is None and query_name:

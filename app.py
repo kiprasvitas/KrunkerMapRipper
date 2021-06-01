@@ -32,7 +32,6 @@ def handle_job():
             output = { 'id': None, 'error_message': 'No job exists with the id number ' + query_id }
     elif query_name and query_key:
         try:
-            str(base64.b64decode(query_key))[2:-1]
             if (str(base64.b64decode(query_key))[2:-1] == str(datetime.today()).split()[0]):
                 res = requests.get('https://api.krunker.io/search?type=map&val=' + query_name)
                 response = json.loads(res.text)

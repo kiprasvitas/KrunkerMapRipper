@@ -4,6 +4,7 @@ from rq import Queue
 from worker import conn
 from utils import scrapeMap
 from datetime import datetime
+import base64
 
 app = Flask(__name__)
 q = Queue(connection=conn)

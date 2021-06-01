@@ -31,17 +31,25 @@ def handle_job():
         else:
             output = { 'id': None, 'error_message': 'No job exists with the id number ' + query_id }
     elif query_name and query_key:
-        if (str(base64.b64decode(query_key))[2:-1] == str(datetime.today()).split()[0]):
-            res = requests.get('https://api.krunker.io/search?type=map&val=' + map_name)
-            response = json.loads(res.text)
-            try:
-                map_id = response["data"][0]["map_id"]
-                new_job = q.enqueue(scrapeMap, query_name)
-                output = get_status(new_job)
-            except:
-                print("no map found")
-                output = {'error_message': 'No map found with that name'}
-        else:
+        try:
+            str(base64.b64decode(query_key))[2:-1]
+            if (str(base64.b64decode(query_key))[2:-1] == str(datetime.today()).split()[0]):
+                res = requests.get('https://api.krunker.io/search?type=map&val=' + query_name)
+                response = json.loads(res.text)
+                try:
+                    map_id = response["data"][0]["map_id"]
+                    if (map_id):
+                        new_job = q.enqueue(scrapeMap, query_name)
+                        output = get_status(new_job)
+                    else:
+                        print("no map found")
+                        output = {'error_message': 'No map found with that name'}
+                except:
+                    print("no map found")
+                    output = {'error_message': 'No map found with that name'}
+            else:
+                output = {'error_message': 'Failed to start due to an invalid API key'}
+        except:
             output = {'error_message': 'Failed to start due to an invalid API key'}
     elif query_name is None and query_key:
         output = {'error_message': 'No job can start without a map name'}

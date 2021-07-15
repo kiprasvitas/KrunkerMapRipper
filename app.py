@@ -19,7 +19,7 @@ def handle_job():
     if query_id:
         found_job = q.fetch_job(query_id)
         if found_job:
-            return 'failed' if job.is_failed else "pending" if job.result == None else found_job.result
+            return 'failed' if found_job.is_failed else "pending" if found_job.result == None else found_job.result
     elif query_name:
         job = q.enqueue(scrapeMap, query_name)
         return job.id

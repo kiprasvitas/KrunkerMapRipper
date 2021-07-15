@@ -1,5 +1,5 @@
 import os
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from rq import Queue
 from worker import conn
 from utils import scrapeMap
@@ -7,61 +7,25 @@ from datetime import datetime
 import base64
 import requests
 import json
+from time import sleep
 
 app = Flask(__name__)
 q = Queue(connection=conn)
 
-def get_status(job):
-    status = {
-        'id': job.id,
-        'result': job.result,
-        'status': 'failed' if job.is_failed else 'pending' if job.result == None else 'completed'
-    }
-    status.update(job.meta)
-    return status
-
 @app.route("/")
 def handle_job():
-    query_id = request.args.get('job')
     query_name = request.args.get('name')
-    query_key = request.args.get('key')
+    query_id = request.args.get('job')
     if query_id:
         found_job = q.fetch_job(query_id)
         if found_job:
-            output = get_status(found_job)
-        else:
-            output = { 'id': None, 'error_message': 'No job exists with the id number ' + query_id }
-    elif query_name and query_key:
-        def isBase64(s):
-            try:
-                base64.b64decode(s)
-                return True
-            except:
-                return False
-        if (isBase64(query_key) == True):
-            if (str(base64.b64decode(query_key))[2:-1] == str(datetime.today()).split()[0]):
-                res = requests.get('https://api.krunker.io/search?type=map&val=' + query_name)
-                response = json.loads(res.text)
-                try:
-                    map_id = response["data"][0]["map_id"]
-                    if (map_id):
-                        new_job = q.enqueue(scrapeMap, query_name)
-                        output = get_status(new_job)
-                except:
-                    print("no map found")
-                    output = {'error_message': 'No map found with that name'}
-            else:
-                output = {'error_message': 'Failed to start due to an invalid API key'}
-        else:
-            output = {'error_message': 'Failed to start due to an invalid API key'}
-
-    elif query_name is None and query_key:
-        output = {'error_message': 'No job can start without a map name'}
-    elif query_key is None and query_name:
-        output = {'error_message': 'No job can start without a valid API key'}
+            return found_job.result
+    elif query_name:
+        job = q.enqueue(scrapeMap, query_name)
+        return """
+        <meta http-equiv="refresh" content="5" />{}""".format('failed' if job.is_failed else "running" if job.result == None else job.id)
     else:
-        output = {'error_message': 'No job can start without a map name and a valid API key'}
-    return jsonify(output)
+        return "include name"
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))

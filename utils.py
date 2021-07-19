@@ -25,7 +25,7 @@ def scrapeMap(name):
     driver = uc.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), patcher_force_close=True, options=options, desired_capabilities=capabilities)
 
     def process_browser_logs_for_network_events(logs):
-        mapdata = "No map data was found."
+        mapdata = "No map data was found. This could be a system failure or it could simply be the map can't be downloaded."
         for entry in logs:
             log = json.loads(entry["message"])["message"]
             if ("Network.webSocketFrameReceived" in log["method"]):
@@ -47,7 +47,7 @@ def scrapeMap(name):
     driver.get('https://krunker.io/?play={}'.format(map_name))
     print("website loaded")
 
-    sleep(15)
+    sleep(20)
 
     logs = driver.get_log("performance")
 
